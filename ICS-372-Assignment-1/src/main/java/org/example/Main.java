@@ -30,6 +30,7 @@ public class Main {
                 String model = (String) vehicle.get("vehicle_model");
                 String id = (String) vehicle.get("vehicle_id");
                 Long price = (Long) vehicle.get("price");
+                Long acquisitionDate = (Long) vehicle.get("acquisition_date");
 
                 System.out.println("Vehicle Type: " + type);
                 System.out.println("Manufacturer: " + manufacturer);
@@ -37,6 +38,7 @@ public class Main {
                 System.out.println("Price: $" + price);
                 System.out.println("Dealer ID: "+ dealershipId);
                 System.out.println("ID: " + id);
+                System.out.println("Acquisition Date: " + acquisitionDate);
                 System.out.println("----------------------");
 
 
