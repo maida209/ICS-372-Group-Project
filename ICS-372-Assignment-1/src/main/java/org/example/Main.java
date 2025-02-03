@@ -43,6 +43,25 @@ public class Main {
 
 
 
+               Vehicle newVehicle;
+                switch (type.toLowerCase()) {
+                    case "suv":
+                        newVehicle = new SUV(id, manufacturer, model, acquisitionDate, price);
+                        break;
+                    case "sedan":
+                        newVehicle = new Sedan(id, manufacturer, model, acquisitionDate, price);
+                        break;
+                    case "pickup":
+                        newVehicle = new Pickup(id, manufacturer, model, acquisitionDate, price);
+                        break;
+                    case "sports car":
+                        newVehicle = new SportsCar(id, manufacturer, model, acquisitionDate, price);
+                        break;
+                    default:
+                        System.out.println("Unknown vehicle type: " + type);
+                        continue;
+                }
+
 
 
             }
