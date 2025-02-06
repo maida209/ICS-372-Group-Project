@@ -7,10 +7,13 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class Main {
     public static void main(String[] args) throws IOException{
+        Set<Dealer> dealerSet = new HashSet<Dealer>();
 
         String path = "src/main/java/org/example/inventory.json";
 
@@ -31,6 +34,8 @@ public class Main {
                 String id = (String) vehicle.get("vehicle_id");
                 Long price = (Long) vehicle.get("price");
                 Long acquisitionDate = (Long) vehicle.get("acquisition_date");
+
+
 
                 System.out.println("Vehicle Type: " + type);
                 System.out.println("Manufacturer: " + manufacturer);
