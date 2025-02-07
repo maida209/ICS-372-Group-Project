@@ -15,28 +15,102 @@ import java.util.Set;
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner s = new Scanner(System.in);
-        Set<Dealer> dealerSet = new HashSet<Dealer>();
+        Set<Dealer> dealerSet = new HashSet<Dealer>();  //create an empty HashSet to store unique Dealer obj
 
-        // asking user for file path
-        System.out.println("Enter JSON file path: ");
+        System.out.println("Enter JSON file path: ");        //src/main/java/org/example/inventory.json
         String filePath = s.next();
-
+        //Called the JSONParse() with filePath & dealerSet
         JSONParse(filePath, dealerSet);
 
+        int num =0;
+        while (num != 5) {
+            System.out.println("1: Check  Dealers and their Records : ");
+            System.out.println("2: enable dealer");
+            System.out.println("3: Disable dealer");
+            System.out.println("4: Add a new vehicle in desired dealer");
+            System.out.println("5: Exit");
+            System.out.println("Please Choose your desired option : ");
+            num = s.nextInt();    //Read user input
 
+
+            switch (num) {
+                case 1: // printing  each dealer and  it's vehicle record
+
+                    for (Dealer d : dealerSet) {
+                        System.out.println("-----------------");
+                        System.out.println("Dealer " + d.getDealerID());
+                        System.out.println("-----------------");
+                        for (Vehicle v : d.getVehicles()) {
+                            System.out.println("Vehicle ID: " + v.getVehicleID());
+                            System.out.println("Model:" + v.getModel());
+                        }
+                    }
+                    System.out.println(" ");
+                    break;
+                case 2:   //Enable a dealer
+                    System.out.println("Which dealer you want to enable: ");
+                    String dealerID = s.next();
+                    boolean isenable = false;
+                    for (Dealer d : dealerSet) {    // Loop through existing dealers
+                        if (d.getDealerID().equals(dealerID)) {
+                            d.enableAcquisition();
+                            System.out.println("Dealer "+ dealerID + " is now enable.");
+                            isenable = true;
+                            break;
+                        }
+                    }
+                    if(!isenable){
+                        System.out.println("This Dealer ID does not exist.");
+                    }
+                    System.out.println(" ");
+                    break;
+
+                case 3:  //Disable a dealer
+                    System.out.println("Which dealer you want to disable: ");
+                    String dealerID2 = s.next();
+                    boolean isDisable = false;
+                    for(Dealer d: dealerSet){
+                        if(d.getDealerID().equals(dealerID2)){
+                            d.disableAcquisition();
+                            System.out.println("Dealer " + dealerID2 + " is now disable.");
+                            isDisable =true;
+                            break;
+                        }
+                    }
+                    if(!isDisable){
+                        System.out.println("This Dealer Id does not exist.");
+                    }
+                    System.out.println(" ");
+                    break;
+                case 4:   //Add a new vehicle to a dealer
+                    break;
+                case 5:   //Exit
+                    System.out.println("Exiting the system.");
+                    break;
+
+                default:
+                    System.out.println("Not a valid option");
+
+            }
+        }
+        s.close();
     }
-
+    //JSONParse() reads the JSON file, extracts vehicle data, categorizes vehicles, and organizes them under dealerships.
     static void JSONParse(String path, Set<Dealer> dealerSet) throws IOException {
-        JSONParser parse = new JSONParser();
+        JSONParser parser = new JSONParser();     //JSONParser obj(translator): to parser(convert) JSON-formatted data
         try {
-            FileReader read = new FileReader(path);
-            JSONObject mainJsonObject = (JSONObject) parse.parse(read);
+            FileReader read = new FileReader(path);    //Opens the JSON file at path and prepares for reading
+            JSONObject mainJsonObject = (JSONObject) parser.parse(read);    //JSONParser reads content from FileReader(read) as a stream of characters|
+                                                                            // parses the JSON content| Converts it into JSONObject that JAVA can work with
 
-            JSONArray carInventory = (JSONArray) mainJsonObject.get("car_inventory");
+            JSONArray carInventory = (JSONArray) mainJsonObject.get("car_inventory");   //retrieves the value associated with the "car_inventory" key & cast it to JSONArray
 
+            //Iterate over a JSONArray (carInventory), extracts data for each vehicle
+            //and creates a corresponding Vehicle object based on its type (SUV, Sedan, Pickup, or SportsCar).
             for (Object vehicleObj : carInventory) {
-                JSONObject vehicle = (JSONObject) vehicleObj;
+                 JSONObject vehicle = (JSONObject) vehicleObj;
 
+                //Extract values using .get("key") from vehicle JSONObject
                 String type = (String) vehicle.get("vehicle_type");
                 String dealershipId = (String) vehicle.get("dealership_id");
                 String manufacturer = (String) vehicle.get("vehicle_manufacturer");
@@ -45,8 +119,9 @@ public class Main {
                 Long price = (Long) vehicle.get("price");
                 Long acquisitionDate = (Long) vehicle.get("acquisition_date");
 
+                //Create a correct type of vehicle Obj
                 Vehicle newVehicle;
-                switch (type.toLowerCase()) {
+                switch (type.toLowerCase()){
                     case "suv":
                         newVehicle = new SUV(id, manufacturer, model, acquisitionDate, price);
                         break;
@@ -61,14 +136,14 @@ public class Main {
                         break;
                     default:
                         System.out.println("Unknown vehicle type: " + type);
-                        continue;
+                        continue;  //Skips to the next vehicle in carInventory, preventing errors
                 }
+
 
                 // checking if dealer already has an instance
                 boolean found = false;
-                for (Dealer d : dealerSet) {
-                    if (d.getDealerID().equals(dealershipId)) {
-                        d.enableAcquisition();
+                for (Dealer d : dealerSet) {    // Loop through existing dealers
+                    if (d.getDealerID().equals(dealershipId)) {     // Check if the dealer exists
                         d.addVehicle(newVehicle);
                         found = true;
                         break;
@@ -77,10 +152,10 @@ public class Main {
                 }
                 // if dealer does not have instance, create a new instance
                 if (!found) {
-                    Dealer d = new Dealer(dealershipId);
-                    d.enableAcquisition();
+                    Dealer d = new Dealer(dealershipId);    //If the dealer is not found, create a new one and add it to dealerSet
                     d.addVehicle(newVehicle);
                     dealerSet.add(d);
+
                 }
 
             }
@@ -90,15 +165,6 @@ public class Main {
             System.out.println("Not Opening");
         }
 
-        // printing  each dealer's vehicles
-        for (Dealer d : dealerSet) {
-            System.out.println("-----------------");
-            System.out.println("Dealer " + d.getDealerID());
-            System.out.println("-----------------");
-            for (Vehicle v : d.getVehicles()) {
-                System.out.println("Vehicle ID: " + v.getVehicleID());
 
-            }
-        }
     }
 }
