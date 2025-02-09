@@ -1,0 +1,17 @@
+@startuml
+class Vehicle {
+    +id: String
+    +manufacturer: String
+    +model: String
+    +acquisitionDate: long
+    +price: double
+    +type: String
+}
+
+class Car {
+    +doors: int
+}
+
+Vehicle <|-- Car
+
+@enduml
