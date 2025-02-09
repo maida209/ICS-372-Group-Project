@@ -17,7 +17,7 @@ public class Main {
         Scanner s = new Scanner(System.in);
         Set<Dealer> dealerSet = new HashSet<Dealer>();  //create an empty HashSet to store unique Dealer obj
 
-        System.out.println("Enter JSON file path: ");        //src/main/java/org/example/inventory.json
+        System.out.println("Enter JSON file path: ");        // filepath: src/main/java/org/example/inventory.json
         String filePath = s.next();
         //Called the JSONParse() with filePath & dealerSet
         JSONParse(filePath, dealerSet);
@@ -28,6 +28,7 @@ public class Main {
             System.out.println("2: enable dealer");
             System.out.println("3: Disable dealer");
             System.out.println("4: Add a new vehicle in desired dealer");
+
             System.out.println("5: Exit");
             System.out.println("Please Choose your desired option : ");
             num = s.nextInt();    //Read user input
@@ -77,12 +78,79 @@ public class Main {
                             break;
                         }
                     }
+
                     if(!isDisable){
                         System.out.println("This Dealer Id does not exist.");
                     }
                     System.out.println(" ");
                     break;
                 case 4:   //Add a new vehicle to a dealer
+                    System.out.println("Add vehicle via JSON or Manual (enter 'manual' or 'json') : ");
+                    String inputMethod = s.next();
+
+                    if(inputMethod.equalsIgnoreCase("JSON")){
+                        System.out.println("Enter JSON file path: ");
+                        filePath = s.next();
+                        JSONParse(filePath, dealerSet);
+
+                    } else if (inputMethod.equals("manual")) {
+                        // Manual input case
+                        System.out.println("Enter Dealer ID to add the vehicle to: ");
+                        dealerID = s.next();
+                        Dealer selectedDealer = null;
+
+                        for (Dealer d : dealerSet) {
+                            if (d.getDealerID().equals(dealerID)) {
+                                selectedDealer = d;
+                                break;
+                            }
+                        }
+
+                        if (selectedDealer == null) {
+                            System.out.println("Dealer ID not found.");
+                            break;
+                        }
+
+                        if(!selectedDealer.getIsAcquisitionEnabled()){
+                            System.out.println("Dealer Disabled");
+                        }else{
+                            System.out.println("Enter Vehicle ID: ");
+                            String id = s.next();
+
+                            System.out.println("Enter Manufacturer: ");
+                            String manufacturer = s.next();
+
+                            s.nextLine();
+
+                            System.out.println("Enter Model: ");
+                            String model = s.nextLine();
+
+                            System.out.println("Enter Acquisition Date (as long value): ");
+                            long acquisitionDate = s.nextLong();
+
+                            System.out.println("Enter Price: ");
+                            double price = s.nextDouble();
+
+                            s.nextLine();
+
+                            System.out.println("Enter Vehicle Type (SUV, Sedan, Pickup, Sports Car): ");
+                            String type = s.nextLine();
+
+
+                            Vehicle newVehicle = checkType( type,  manufacturer,  model,  id,  acquisitionDate,  price);
+                            boolean added = selectedDealer.addVehicle(newVehicle);
+                            if(added){
+                                System.out.println("Vehicle added successfully to Dealer " + dealerID);
+                            }
+                        }
+
+
+                    }
+                    else {
+                        System.out.println("Invalid option. Please enter 'manual' or 'json'.");
+                    }
+
+                    System.out.println(" ");
                     break;
                 case 5:   //Exit
                     System.out.println("Exiting the system.");
@@ -120,26 +188,9 @@ public class Main {
                 Long acquisitionDate = (Long) vehicle.get("acquisition_date");
 
                 //Create a correct type of vehicle Obj
-                Vehicle newVehicle;
-                switch (type.toLowerCase()){
-                    case "suv":
-                        newVehicle = new SUV(id, manufacturer, model, acquisitionDate, price);
-                        break;
-                    case "sedan":
-                        newVehicle = new Sedan(id, manufacturer, model, acquisitionDate, price);
-                        break;
-                    case "pickup":
-                        newVehicle = new Pickup(id, manufacturer, model, acquisitionDate, price);
-                        break;
-                    case "sports car":
-                        newVehicle = new SportsCar(id, manufacturer, model, acquisitionDate, price);
-                        break;
-                    default:
-                        System.out.println("Unknown vehicle type: " + type);
-                        continue;  //Skips to the next vehicle in carInventory, preventing errors
-                }
 
 
+                Vehicle newVehicle = checkType( type,  manufacturer,  model,  id,  acquisitionDate,  price);
                 // checking if dealer already has an instance
                 boolean found = false;
                 for (Dealer d : dealerSet) {    // Loop through existing dealers
@@ -166,5 +217,26 @@ public class Main {
         }
 
 
+    }
+    static Vehicle checkType(String type, String manufacturer, String model, String id, long acquisitionDate, double price ){
+        Vehicle newVehicle = null;
+        switch (type.toLowerCase()){
+            case "suv":
+                newVehicle = new SUV(id, manufacturer, model, acquisitionDate, price);
+                break;
+            case "sedan":
+                newVehicle = new Sedan(id, manufacturer, model, acquisitionDate, price);
+                break;
+            case "pickup":
+                newVehicle = new Pickup(id, manufacturer, model, acquisitionDate, price);
+                break;
+            case "sports car":
+                newVehicle = new SportsCar(id, manufacturer, model, acquisitionDate, price);
+                break;
+            default:
+                System.out.println("Unknown vehicle type: " + type);
+                break;
+        }
+        return newVehicle;
     }
 }
