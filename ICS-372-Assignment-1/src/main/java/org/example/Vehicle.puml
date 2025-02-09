@@ -1,0 +1,40 @@
+@startuml
+
+abstract class Vehicle {
+    +String vehicleID
+    +String manufacturer
+    +String model
+    +long acquisitionDate
+    +double price
+    +String type
+
+    +getVehicleID(): String
+    +getManufacturer(): String
+    +getModel(): String
+    +getAcquisitionDate(): long
+    +getPrice(): double
+    +getType(): String
+}
+
+class SUV {
+    +SUV(vehicleID: String, manufacturer: String, model: String, acquisitionDate: long, price: double)
+}
+
+class Sedan {
+    +Sedan(vehicleID: String, manufacturer: String, model: String, acquisitionDate: long, price: double)
+}
+
+class Pickup {
+    +Pickup(vehicleID: String, manufacturer: String, model: String, acquisitionDate: long, price: double)
+}
+
+class SportsCar {
+    +SportsCar(vehicleID: String, manufacturer: String, model: String, acquisitionDate: long, price: double)
+}
+
+Vehicle <|-- SUV
+Vehicle <|-- Sedan
+Vehicle <|-- Pickup
+Vehicle <|-- SportsCar
+
+@enduml

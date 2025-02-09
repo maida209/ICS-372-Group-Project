@@ -1,0 +1,27 @@
+@startuml
+
+class Dealer {
+    - String dealerID
+    - boolean isAcquisitionEnabled
+    - List<Vehicle> vehicles
+
+    +Dealer(dealerID: String)
+    +enableAcquisition(): void
+    +disableAcquisition(): void
+    +addVehicle(vehicle: Vehicle): boolean
+    +getDealerID(): String
+    +getVehicles(): List<Vehicle>
+}
+
+abstract class Vehicle {
+    +String vehicleID
+    +String manufacturer
+    +String model
+    +long acquisitionDate
+    +double price
+    +String type
+}
+
+Dealer "1" *-- "many" Vehicle : has
+
+@enduml
