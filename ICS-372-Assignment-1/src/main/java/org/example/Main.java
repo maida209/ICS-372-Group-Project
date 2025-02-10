@@ -27,13 +27,13 @@ public class Main {
         JSONParse(filePath, dealerSet);
 
         int num =0;
-        while (num != 5) {
+        while (num != 6) {
             System.out.println("1: Check Dealers and their Vehicles: ");
             System.out.println("2: Enable dealer");
             System.out.println("3: Disable dealer");
             System.out.println("4: Add a new vehicle in desired dealer: ");
-
-            System.out.println("5: Exit and Export JSON file: ");
+            System.out.println("5: Get the updated JSON file.");
+            System.out.println("6: Exit and Export JSON file: ");
             System.out.println("Please Choose your desired option : ");
             num = s.nextInt();    //Read user input
 
@@ -156,7 +156,13 @@ public class Main {
 
                     System.out.println(" ");
                     break;
-                case 5:   //Exit
+
+                case 5:  //Get the updated JSON File
+                    exportJSON(dealerSet);
+                    System.out.println("---Check you new JSON file---");
+                    System.out.println(" ");
+                    break;
+                case 6:   //Exit
                     System.out.println("Exiting the system.");
                     exportJSON(dealerSet);
                     break;
@@ -246,27 +252,29 @@ public class Main {
     }
 
     static void exportJSON(Set<Dealer> dealerSet) throws IOException {
-        ObjectMapper objMap = new ObjectMapper();
-        objMap.enable(SerializationFeature.INDENT_OUTPUT);
-        Map<String, List<Map<String, Object>>> outerList = new HashMap<>();
-        List<Map<String, Object>> innerList = new ArrayList<>();
+        ObjectMapper objMap = new ObjectMapper();               //Used to convert JAVA obj into JSON
+        objMap.enable(SerializationFeature.INDENT_OUTPUT);         //makes output JSON more readable
+        Map<String, List<Map<String, Object>>> outerList = new LinkedHashMap<>();     //outerList:Map-> key="Car Inventory", value= List of vehicles (inner List)
+                                                                                //Stores the entire inventory under a key ("Car Inventory"), making the JSON structured.
+        List<Map<String, Object>> innerList = new ArrayList<>();             //innerList: list of multiple vehicle records(For Each Vehicle-> Vehicle's attributed stored in a Map(key-value pairs)
 
-        for (Dealer d : dealerSet) {
-            for (Vehicle v : d.getVehicles()) {
-                Map<String, Object> vehicleData = new HashMap<>();
-                vehicleData.put("dealership_id", d.getDealerID()); // Assuming getId() exists
+        for (Dealer d : dealerSet) {   //loops through all dealers in dealerSet
+            for (Vehicle v : d.getVehicles()) {    //loops through all vehicles owned by that dealer
+                Map<String, Object> vehicleData = new LinkedHashMap<>();     //Stores each  attribute of a vehicle as a Map(key-value pairs)
+                vehicleData.put("dealership_id", d.getDealerID());    // HashMap.put("key", value) | assuming getDealerID() exists
                 vehicleData.put("vehicle_type", v.getType());
                 vehicleData.put("vehicle_manufacturer", v.getManufacturer());
                 vehicleData.put("vehicle_model", v.getModel());
-                vehicleData.put("vehicle_id", v.getVehicleID()); // Assuming getId() exists
+                vehicleData.put("vehicle_id", v.getVehicleID());       // Assuming getId() exists
                 vehicleData.put("price", v.getPrice());
                 vehicleData.put("acquisition_date", v.getAcquisitionDate());
 
-                innerList.add(vehicleData);
+                innerList.add(vehicleData);     //add the  vehicle Obj to innerList (list)
             }
         }
-
+        innerList.sort(Comparator.comparing(m ->(String)m.get("dealership_id")));   //sort by dealership_id to group similar dealerships together
         outerList.put("Car Inventory", innerList);
-        objMap.writeValue(new File("Dealers_Vehicles.json"), outerList);
+        objMap.writerWithDefaultPrettyPrinter().writeValue(new File("Dealers_Vehicles.json"), outerList);    //using: writeValue( File resultFile, Obj value) from Jackson's ObjectMapper class
+
     }
 }
