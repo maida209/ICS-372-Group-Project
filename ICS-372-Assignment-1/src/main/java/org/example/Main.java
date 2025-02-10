@@ -1,18 +1,22 @@
 package org.example;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 
 public class Main {
+
+
     public static void main(String[] args) throws IOException {
         Scanner s = new Scanner(System.in);
         Set<Dealer> dealerSet = new HashSet<Dealer>();  //create an empty HashSet to store unique Dealer obj
@@ -24,12 +28,12 @@ public class Main {
 
         int num =0;
         while (num != 5) {
-            System.out.println("1: Check  Dealers and their Records : ");
-            System.out.println("2: enable dealer");
+            System.out.println("1: Check Dealers and their Vehicles: ");
+            System.out.println("2: Enable dealer");
             System.out.println("3: Disable dealer");
-            System.out.println("4: Add a new vehicle in desired dealer");
+            System.out.println("4: Add a new vehicle in desired dealer: ");
 
-            System.out.println("5: Exit");
+            System.out.println("5: Exit and Export JSON file: ");
             System.out.println("Please Choose your desired option : ");
             num = s.nextInt();    //Read user input
 
@@ -154,6 +158,7 @@ public class Main {
                     break;
                 case 5:   //Exit
                     System.out.println("Exiting the system.");
+                    exportJSON(dealerSet);
                     break;
 
                 default:
@@ -238,5 +243,30 @@ public class Main {
                 break;
         }
         return newVehicle;
+    }
+
+    static void exportJSON(Set<Dealer> dealerSet) throws IOException {
+        ObjectMapper objMap = new ObjectMapper();
+        objMap.enable(SerializationFeature.INDENT_OUTPUT);
+        Map<String, List<Map<String, Object>>> outerList = new HashMap<>();
+        List<Map<String, Object>> innerList = new ArrayList<>();
+
+        for (Dealer d : dealerSet) {
+            for (Vehicle v : d.getVehicles()) {
+                Map<String, Object> vehicleData = new HashMap<>();
+                vehicleData.put("dealership_id", d.getDealerID()); // Assuming getId() exists
+                vehicleData.put("vehicle_type", v.getType());
+                vehicleData.put("vehicle_manufacturer", v.getManufacturer());
+                vehicleData.put("vehicle_model", v.getModel());
+                vehicleData.put("vehicle_id", v.getVehicleID()); // Assuming getId() exists
+                vehicleData.put("price", v.getPrice());
+                vehicleData.put("acquisition_date", v.getAcquisitionDate());
+
+                innerList.add(vehicleData);
+            }
+        }
+
+        outerList.put("Car Inventory", innerList);
+        objMap.writeValue(new File("Dealers_Vehicles.json"), outerList);
     }
 }
