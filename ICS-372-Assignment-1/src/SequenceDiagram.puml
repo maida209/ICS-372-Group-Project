@@ -1,0 +1,32 @@
+@startuml
+
+actor User
+participant Main
+participant JSONParser
+participant Dealer
+participant Vehicle
+
+User -> Main: Start Program
+User -> Main: Enter JSON file path
+Main -> JSONParser: Read JSON File
+
+JSONParser -> Dealer: Create/Find Dealer
+JSONParser -> Vehicle: Create Vehicle Object
+Dealer -> Vehicle: Assign Vehicle to Dealer
+
+User -> Main: Select Menu Option
+
+User -> Main: View Dealers and Vehicles
+Main -> Dealer: Retrieve Dealer List
+Dealer -> Vehicle: Retrieve Vehicle List
+
+User -> Main: Enable/Disable Dealer
+Main -> Dealer: Change Dealer Status
+
+User -> Main: Add New Vehicle
+Main -> Dealer: Find Dealer
+Dealer -> Vehicle: Create Vehicle
+
+User -> Main: Exit
+
+@enduml
