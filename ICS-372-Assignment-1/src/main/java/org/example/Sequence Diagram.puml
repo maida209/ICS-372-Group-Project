@@ -1,0 +1,38 @@
+@startuml
+
+actor User
+participant Main
+participant "File System" as File
+participant Dealer
+participant "Vehicle (Abstract)" as Vehicle
+participant "SUV/Sedan/Pickup/SportsCar" as Car
+
+User -> Main: Choose 'Add Vehicle' (Manual/JSON)
+
+alt JSON Input
+    Main -> User: Enter JSON file path
+    User -> Main: Provide file path
+    Main -> File: Read JSON file
+    Main -> Main: JSONParse(filePath, dealerSet)
+    Main -> Vehicle: checkType(type, manufacturer, model, ...)
+    Vehicle -> Car: Create concrete vehicle object
+    Main -> Dealer: addVehicle(newVehicle)
+    Dealer -> Main: Confirm addition
+end
+
+alt Manual Input
+    Main -> User: Enter Dealer ID
+    User -> Main: Provide Dealer ID
+    Main -> Dealer: Validate Dealer
+    Dealer -> Main: Confirm Dealer exists
+    Main -> User: Enter Vehicle details
+    User -> Main: Provide details (ID, Manufacturer, Model, Price...)
+    Main -> Vehicle: checkType(type, manufacturer, model, ...)
+    Vehicle -> Car: Create concrete vehicle object
+    Main -> Dealer: addVehicle(newVehicle)
+    Dealer -> Main: Confirm addition
+end
+
+Main -> User: Show success message
+
+@enduml

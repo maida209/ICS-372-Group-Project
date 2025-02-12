@@ -97,7 +97,7 @@ public class Main {
                         filePath = s.next();
                         JSONParse(filePath, dealerSet);
 
-                    } else if (inputMethod.equals("manual")) {
+                    } else if (inputMethod.equalsIgnoreCase("manual")) {
                         // Manual input case
                         System.out.println("Enter Dealer ID to add the vehicle to: ");
                         dealerID = s.next();
