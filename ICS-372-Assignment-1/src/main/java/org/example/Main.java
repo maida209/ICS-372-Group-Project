@@ -27,7 +27,7 @@ public class Main {
         JSONParse(filePath, dealerSet);
 
         int num =0;
-        while (num != 6) {
+        while (true) {
             System.out.println("1: Check Dealers and their Vehicles: ");
             System.out.println("2: Enable dealer");
             System.out.println("3: Disable dealer");
@@ -59,12 +59,12 @@ public class Main {
                     for (Dealer d : dealerSet) {    // Loop through existing dealers
                         if (d.getDealerID().equals(dealerID)) {
                             d.enableAcquisition();
-                            System.out.println("Dealer "+ dealerID + " is now enable.");
+                            System.out.println("Dealer " + dealerID + " is now enable.");
                             isenable = true;
                             break;
                         }
                     }
-                    if(!isenable){
+                    if (!isenable) {
                         System.out.println("This Dealer ID does not exist.");
                     }
                     System.out.println(" ");
@@ -74,16 +74,16 @@ public class Main {
                     System.out.println("Which dealer you want to disable: ");
                     String dealerID2 = s.next();
                     boolean isDisable = false;
-                    for(Dealer d: dealerSet){
-                        if(d.getDealerID().equals(dealerID2)){
+                    for (Dealer d : dealerSet) {
+                        if (d.getDealerID().equals(dealerID2)) {
                             d.disableAcquisition();
                             System.out.println("Dealer " + dealerID2 + " is now disable.");
-                            isDisable =true;
+                            isDisable = true;
                             break;
                         }
                     }
 
-                    if(!isDisable){
+                    if (!isDisable) {
                         System.out.println("This Dealer Id does not exist.");
                     }
                     System.out.println(" ");
@@ -92,7 +92,7 @@ public class Main {
                     System.out.println("Add vehicle via JSON or Manual (enter 'manual' or 'json') : ");
                     String inputMethod = s.next();
 
-                    if(inputMethod.equalsIgnoreCase("JSON")){
+                    if (inputMethod.equalsIgnoreCase("JSON")) {
                         System.out.println("Enter JSON file path: ");
                         filePath = s.next();
                         JSONParse(filePath, dealerSet);
@@ -115,9 +115,9 @@ public class Main {
                             break;
                         }
 
-                        if(!selectedDealer.getIsAcquisitionEnabled()){
+                        if (!selectedDealer.getIsAcquisitionEnabled()) {
                             System.out.println("Dealer Disabled");
-                        }else{
+                        } else {
                             System.out.println("Enter Vehicle ID: ");
                             String id = s.next();
 
@@ -141,16 +141,15 @@ public class Main {
                             String type = s.nextLine();
 
 
-                            Vehicle newVehicle = checkType( type,  manufacturer,  model,  id,  acquisitionDate,  price);
+                            Vehicle newVehicle = checkType(type, manufacturer, model, id, acquisitionDate, price);
                             boolean added = selectedDealer.addVehicle(newVehicle);
-                            if(added){
+                            if (added) {
                                 System.out.println("Vehicle added successfully to Dealer " + dealerID);
                             }
                         }
 
 
-                    }
-                    else {
+                    } else {
                         System.out.println("Invalid option. Please enter 'manual' or 'json'.");
                     }
 
@@ -165,6 +164,7 @@ public class Main {
                 case 6:   //Exit
                     System.out.println("Exiting the system.");
                     exportJSON(dealerSet);
+                    System.exit(0);
                     break;
 
                 default:
@@ -172,7 +172,6 @@ public class Main {
 
             }
         }
-        s.close();
     }
     //JSONParse() reads the JSON file, extracts vehicle data, categorizes vehicles, and organizes them under dealerships.
     static void JSONParse(String path, Set<Dealer> dealerSet) throws IOException {
