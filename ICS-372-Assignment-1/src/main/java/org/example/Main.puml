@@ -3,6 +3,8 @@
 class Main {
     +main(args: String[]): void
     +JSONParse(path: String, dealerSet: Set<Dealer>): void
+    +exportJSON(dealerSet: Set<Dealer>): void
+    +checkType(type: String, manufacturer: String, model: String, id: String, acquisitionDate: long, price: double): Vehicle
 }
 
 class Dealer {
@@ -44,7 +46,7 @@ class SportsCar {
 }
 
 Main ..> Dealer : "manages"
-Main ..> Vehicle : "parses JSON to create"
+Main ..> Vehicle : "creates via checkType"
 
 Vehicle <|-- SUV
 Vehicle <|-- Sedan
