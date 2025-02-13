@@ -2,9 +2,8 @@
 
 actor User
 participant Main
-participant "File System" as File
 participant Dealer
-participant "Vehicle (Abstract)" as Vehicle
+
 participant "SUV/Sedan/Pickup/SportsCar" as Car
 
 User -> Main: Choose 'Add Vehicle' (Manual/JSON)
@@ -12,12 +11,14 @@ User -> Main: Choose 'Add Vehicle' (Manual/JSON)
 alt JSON Input
     Main -> User: Enter JSON file path
     User -> Main: Provide file path
-    Main -> File: Read JSON file
     Main -> Main: JSONParse(filePath, dealerSet)
-    Main -> Vehicle: checkType(type, manufacturer, model, ...)
-    Vehicle -> Car: Create concrete vehicle object
-    Main -> Dealer: addVehicle(newVehicle)
-    Dealer -> Main: Confirm addition
+    loop For each vehicle in JSON
+        Main -> Main: checkType(type, manufacturer, model, ...)
+        Main -> Car: Create concrete vehicle object
+        Main -> Dealer: Find or create Dealer
+        Main -> Dealer: addVehicle(newVehicle)
+        Dealer -> Main: Confirm addition
+    end
 end
 
 alt Manual Input
@@ -25,12 +26,16 @@ alt Manual Input
     User -> Main: Provide Dealer ID
     Main -> Dealer: Validate Dealer
     Dealer -> Main: Confirm Dealer exists
-    Main -> User: Enter Vehicle details
-    User -> Main: Provide details (ID, Manufacturer, Model, Price...)
-    Main -> Vehicle: checkType(type, manufacturer, model, ...)
-    Vehicle -> Car: Create concrete vehicle object
-    Main -> Dealer: addVehicle(newVehicle)
-    Dealer -> Main: Confirm addition
+    alt Dealer is Disabled
+        Main -> User: Show 'Dealer Disabled' message
+    else
+        Main -> User: Enter Vehicle details
+        User -> Main: Provide details (ID, Manufacturer, Model, Price...)
+        Main -> Main: checkType(type, manufacturer, model, ...)
+        Main -> Car: Create concrete vehicle object
+        Main -> Dealer: addVehicle(newVehicle)
+        Dealer -> Main: Confirm addition
+    end
 end
 
 Main -> User: Show success message
