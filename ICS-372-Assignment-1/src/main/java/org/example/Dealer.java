@@ -12,15 +12,12 @@ public class Dealer {
         this.vehicles = new ArrayList<>();
         this.isAcquisitionEnabled = true;
     }
-
     public void enableAcquisition() {
         this.isAcquisitionEnabled = true;
     }
-
     public void disableAcquisition() {
         this.isAcquisitionEnabled = false;
     }
-
     public boolean addVehicle(Vehicle vehicle) {
         if (isAcquisitionEnabled) {
             vehicles.add(vehicle);
@@ -42,8 +39,6 @@ public class Dealer {
         return isAcquisitionEnabled;
     }
 }
-
-
 
 
 
