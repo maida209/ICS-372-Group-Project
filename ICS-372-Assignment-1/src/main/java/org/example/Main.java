@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Scanner s = new Scanner(System.in);
         Set<Dealer> dealerSet = new HashSet<Dealer>();  //create an empty HashSet to store unique Dealer obj
-        FileOperation fileOperator = new FileOperation();
+        JsonReader fileOperator = new JsonReader();
 
 
         System.out.println("Enter JSON file path: ");        // filepath: src/main/java/org/example/inventory.json
@@ -149,13 +149,13 @@ public class Main {
                     break;
 
                 case 5:  //Get the updated JSON File
-                    fileOperator.exportJSON(dealerSet);
+                    JsonWriter.exportJSON(dealerSet);
                     System.out.println("---Check you new JSON file---");
                     System.out.println(" ");
                     break;
                 case 6:   //Exit
                     System.out.println("Exiting the system.");
-                    fileOperator.exportJSON(dealerSet);
+                    JsonWriter.exportJSON(dealerSet);
                     System.exit(0);
                     break;
 
